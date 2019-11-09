@@ -14,9 +14,28 @@ connection.connect(function (err) {
     showManagerOptions();
 })
 
+function view_products(){
+    var select_query="SELECT ITEM_ID,PRODUCT_NAME,PRICE,STOCK_QUANTITY from products;";
+    connection.query(select_query,function(err,response){
+        console.log("ITEM_ID | PRODUCT_NAME | PRICE | STOCK_QUANTITY");
+        for (let i = 0; i < response.length; i++) {
+            console.log(response[i]["ITEM_ID"], response[i]["PRODUCT_NAME"], response[i]["PRICE"], response[i]["STOCK_QUANTITY"]);
+        }
+    });
+}
+function low_inventory(){
+    var select_query="SELECT ITEM_ID,PRODUCT_NAME,PRICE,STOCK_QUANTITY from products where STOCK_QUANTITY<=5;";
+    connection.query(select_query,function(err,response){
+        console.log("ITEM_ID | PRODUCT_NAME | PRICE | STOCK_QUANTITY");
+        for (let i = 0; i < response.length; i++) {
+            console.log(response[i]["ITEM_ID"], response[i]["PRODUCT_NAME"], response[i]["PRICE"], response[i]["STOCK_QUANTITY"]);
+        }
+    });
+}
+
 function showManagerOptions() {
-    inquirer.prompt([{
-        name: "options",
+    inquirer.prompt({
+        name: "action",
         type: "list",
         message: "What would you like to do?",
         choices: [
@@ -26,19 +45,19 @@ function showManagerOptions() {
             "Add new product",
             "exit"
         ]
-    }]).then(function (answer) {
+    }).then(function (answer) {
         switch (answer.action) {
             case "View products for sale":
-                console.log("option 1");
+                view_products();
             break;
             case "View low inventory":
-                    console.log("option 2");
+                    low_inventory();
             break;
             case "Add to inventory":
-                    console.log("option 3");
+                    console.log("add to inventory");
             break;
             case "Add new product":
-                    console.log("option 4");
+                    console.log("add new product");
             break;
             case "exit":
                    connection.end();
