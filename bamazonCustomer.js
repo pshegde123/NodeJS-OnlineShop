@@ -57,7 +57,8 @@ function processAnswer(answer) {
         }
         else{
             console.log("\nUpdate records\n");
-            var updateQuery = "UPDATE products set STOCK_QUANTITY="+(db_stock_quantity-requestedQuantity);
+            var updateQuery = "UPDATE products set STOCK_QUANTITY="+(db_stock_quantity-requestedQuantity)+" where item_id="+answer.itemid;
+            //console.log(updateQuery);
             connection.query(updateQuery,function(err,resp){
                 if(err) throw err;
                 console.log("Total product price is:",(db_stock_quantity-requestedQuantity)*db_price);
