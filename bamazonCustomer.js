@@ -23,8 +23,21 @@ function readDB() {
         }
         //prompt user
         promptUser();
-        //connection.end();
     });
+}
+function promptUser() {
+    inquirer.prompt([{
+        name: "itemid",
+        type: "input",
+        message: "Enter product id:"
+    }, {
+        name: "quantity",
+        type: "input",
+        message: "Enter quantity:"
+    }]).then(function (answer) {
+        //console.log(answer);
+        processAnswer(answer);
+    })
 }
 function processAnswer(answer) {
     //console.log(answer.itemid, answer.quantity);
@@ -39,6 +52,8 @@ function processAnswer(answer) {
         if( requestedQuantity > db_stock_quantity)
         {
             console.log("\nInsufficient quantity!\n");
+            console.log("\n");
+            promptUser();    
         }
         else{
             console.log("\nUpdate records\n");
@@ -46,23 +61,10 @@ function processAnswer(answer) {
             connection.query(updateQuery,function(err,resp){
                 if(err) throw err;
                 console.log("Total product price is:",(db_stock_quantity-requestedQuantity)*db_price);
+                console.log("\n");
+                promptUser();        
             })
         }
     })
     //connection.end();
-}
-
-function promptUser() {
-    inquirer.prompt([{
-        name: "itemid",
-        type: "input",
-        message: "Enter product id:"
-    }, {
-        name: "quantity",
-        type: "input",
-        message: "Enter quantity:"
-    }]).then(function (answer) {
-        //console.log(answer);
-        processAnswer(answer);
-    })
 }
