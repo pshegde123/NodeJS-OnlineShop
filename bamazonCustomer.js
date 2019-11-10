@@ -29,11 +29,11 @@ function promptUser() {
     inquirer.prompt([{
         name: "itemid",
         type: "input",
-        message: "Enter product id:"
+        message: "Enter id of the product you wish to buy:"
     }, {
         name: "quantity",
-        type: "input",
-        message: "Enter quantity:"
+        type: "number",
+        message: "Enter required quantity:"
     }]).then(function (answer) {
         //console.log(answer);
         processAnswer(answer);
@@ -63,7 +63,8 @@ function processAnswer(answer) {
                 if(err) throw err;
                 console.log("Total product price is:",(db_stock_quantity-requestedQuantity)*db_price);
                 console.log("\n");
-                promptUser();        
+                //promptUser();        
+                readDB();
             })
         }
     })
