@@ -17,14 +17,12 @@ connection.connect(function (err) {
 function readDB() {
     connection.query("SELECT * from products", function (err, response) {
         //console.log(response.length);
-        console.log("ITEM_ID | PRODUCT_NAME | DEPARTMENT_NAME | PRICE | STOCK_QUANTITY");
-        for (let i = 0; i < response.length; i++) {
-            console.log(response[i].item_id, response[i].product_name, response[i].department_name, response[i].price, response[i].stock_quantity);
-        }
+        console.table(response);
         //prompt user
         promptUser();
     });
 }
+
 function promptUser() {
     inquirer.prompt([{
         name: "itemid",
@@ -41,8 +39,8 @@ function promptUser() {
 }
 function processAnswer(answer) {
     //console.log(answer.itemid, answer.quantity);
-    var query = "SELECT PRICE,STOCK_QUANTITY from products where ITEM_ID =" + answer.itemid;
-    console.log(query);
+    var query = "SELECT PRICE,STOCK_QUANTITY,PRODUCT_SALES from products where ITEM_ID =" + answer.itemid;
+    //console.log(query);
     connection.query(query, function (err, response) {
         if (err) throw err;
         var response_json= JSON.parse(JSON.stringify(response));
@@ -56,17 +54,17 @@ function processAnswer(answer) {
             promptUser();    
         }
         else{
-            console.log("\nUpdate records\n");
-            var updateQuery = "UPDATE products set STOCK_QUANTITY="+(db_stock_quantity-requestedQuantity)+" where item_id="+answer.itemid;
+            let current_sale_price = (db_stock_quantity-requestedQuantity)*db_price;
+            let total_sales= parseFloat(response_json[0]["PRODUCT_SALES"]) + current_sale_price; 
+            //console.log(total_sales,response_json[0]["PRODUCT_SALES"],current_sale_price);
+            var updateQuery = "UPDATE products set STOCK_QUANTITY="+(db_stock_quantity-requestedQuantity)+",PRODUCT_SALES="+total_sales.toFixed(2)+" where item_id="+answer.itemid;
             //console.log(updateQuery);
             connection.query(updateQuery,function(err,resp){
                 if(err) throw err;
-                console.log("Total product price is:",(db_stock_quantity-requestedQuantity)*db_price);
+                console.log("\nTotal product price is:",current_sale_price+"$.");
                 console.log("\n");
-                //promptUser();        
                 readDB();
             })
         }
     })
-    //connection.end();
 }
