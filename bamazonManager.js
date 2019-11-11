@@ -17,19 +17,23 @@ connection.connect(function (err) {
 function view_products() {
     var select_query = "SELECT ITEM_ID,PRODUCT_NAME,PRICE,STOCK_QUANTITY from products;";
     connection.query(select_query, function (err, response) {
-        console.log("ITEM_ID | PRODUCT_NAME | PRICE | STOCK_QUANTITY");
+        console.table(response);
+        /*console.log("ITEM_ID | PRODUCT_NAME | PRICE | STOCK_QUANTITY");
         for (let i = 0; i < response.length; i++) {
             console.log(response[i]["ITEM_ID"], response[i]["PRODUCT_NAME"], response[i]["PRICE"], response[i]["STOCK_QUANTITY"]);
-        }
+        }*/
+        showManagerOptions();
     });
 }
 function low_inventory() {
     var select_query = "SELECT ITEM_ID,PRODUCT_NAME,PRICE,STOCK_QUANTITY from products where STOCK_QUANTITY<=5;";
     connection.query(select_query, function (err, response) {
-        console.log("ITEM_ID | PRODUCT_NAME | PRICE | STOCK_QUANTITY");
+        console.table(response);
+        /*console.log("ITEM_ID | PRODUCT_NAME | PRICE | STOCK_QUANTITY");
         for (let i = 0; i < response.length; i++) {
             console.log(response[i]["ITEM_ID"], response[i]["PRODUCT_NAME"], response[i]["PRICE"], response[i]["STOCK_QUANTITY"]);
-        }
+        }*/
+        showManagerOptions();
     });
 }
 function add_inventory() {
@@ -64,35 +68,35 @@ function add_inventory() {
 function add_product() {
     inquirer.prompt([
         {
-            name:"name",
-            type:"input",
-            message:"Enter name of product to add to inventory:"
-        },
-        {   
-            name:"department",
-            type:"input",
-            message:"Enter department name:"
+            name: "name",
+            type: "input",
+            message: "Enter name of product to add to inventory:"
         },
         {
-            name:"price",
-            type:"number",
-            message:"Enter price"
+            name: "department",
+            type: "input",
+            message: "Enter department name:"
         },
         {
-            name:"quantity",
-            type:"number",
-            message:"Enter quantity to add"
+            name: "price",
+            type: "number",
+            message: "Enter price"
+        },
+        {
+            name: "quantity",
+            type: "number",
+            message: "Enter quantity to add"
         }
-    ]).then(function(answer){
-        console.log(typeof(answer.name));
-        let insert_query = "insert into products(PRODUCT_NAME,DEPARTMENT_NAME,PRICE,STOCK_QUANTITY) values('"+answer.name+"','"+answer.department+"',"+answer.price+","+answer.quantity+");";
-        console.log(insert_query);
-        connection.query(insert_query,function(err,resp){
+    ]).then(function (answer) {
+        //console.log(typeof(answer.name));
+        let insert_query = "insert into products(PRODUCT_NAME,DEPARTMENT_NAME,PRICE,STOCK_QUANTITY) values('" + answer.name + "','" + answer.department + "'," + answer.price + "," + answer.quantity + ");";
+        //console.log(insert_query);
+        connection.query(insert_query, function (err, resp) {
             if (err) throw err;
             console.log("New product added successfully!");
             view_products();
-        });
     });
+});
 }
 
 function showManagerOptions() {
@@ -105,7 +109,7 @@ function showManagerOptions() {
             "View low inventory",
             "Add to inventory",
             "Add new product",
-            "exit"
+            "Exit"
         ]
     }).then(function (answer) {
         switch (answer.action) {
@@ -121,7 +125,7 @@ function showManagerOptions() {
             case "Add new product":
                 add_product();
                 break;
-            case "exit":
+            case "Exit":
                 connection.end();
                 break;
         }
